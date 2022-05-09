@@ -26,9 +26,9 @@ def downland_recording(save_directory=''):
         if not os.path.isdir('videos'):
             os.mkdir('videos')
         save_directory = '{}/videos/'.format(os.getcwd())
-    for meeting in response_data['meetings']:
-        for index, recording_file in enumerate(meeting['recording_files']):
-            print(f'Скачиваем запись {index+1}')
+    for index, meeting in enumerate(response_data['meetings']):
+        print(f'Скачиваем запись {index + 1}')
+        for recording_file in meeting['recording_files']:
             urllib.request.urlretrieve(
                 recording_file['download_url'],
                 save_directory + meeting['start_time'])
