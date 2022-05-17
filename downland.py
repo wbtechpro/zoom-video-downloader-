@@ -106,6 +106,8 @@ def downland(save_directory, start_date, next_date, ):
     for meeting in tqdm(response_data['meetings']):
         TOTAL_FILES += len(meeting['recording_files'])
         if not os.path.isdir(dir := '{}_{}'.format(meeting['topic'], meeting['start_time'])):
+            if '/' in dir:
+                dir = dir.replace('/', '')
             os.mkdir(dir)
         for recording_file in meeting['recording_files']:
             downland_recording(recording_file['download_url'],
