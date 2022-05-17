@@ -54,7 +54,7 @@ def main(directory):
                 if month == month_from_to[0] or (month == month_from_to[0] and next_month == month_from_to[1]):
                     start_date = datetime.datetime(year_to, month, days_from_to[0])
                 print(start_date, next_date)
-                # downland(directory, start_date, next_date)
+                downland(directory, start_date, next_date)
     else:
         month_in_year = 13
         for year in range(year_from, year_to + 1):
