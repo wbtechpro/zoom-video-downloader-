@@ -101,7 +101,6 @@ def downland(save_directory, start_date, next_date, ):
         headers={
             'Authorization':
                 'Bearer {}'.format(JWT)}).json()
-    print(response_data)
     global TOTAL_FILES
     os.chdir(save_directory)
     for meeting in tqdm(response_data['meetings']):
