@@ -82,11 +82,11 @@ def main(directory):
                 downland(directory, start_date, next_date)
 
 
-def downland_recording(downland_url, file_id, start, content_type, save_directory):
+def downland_recording(downland_url, topic, fyle_type, save_directory):
     try:
         r = requests.get('{}?access_token={}'.format(downland_url, JWT), stream=True)
         if r.status_code == 200:
-            with open(r'{}'.format(save_directory) + file_id + start + content_type, 'wb') as f:
+            with open(r'{}'.format(save_directory) + topic + '.{}'.format(fyle_type.lower()), 'wb') as f:
                 r.raw.decode_content = True
                 shutil.copyfileobj(r.raw, f)
     except requests.RequestException as problem:
@@ -101,15 +101,18 @@ def downland(save_directory, start_date, next_date, ):
         headers={
             'Authorization':
                 'Bearer {}'.format(JWT)}).json()
+    print(response_data)
     global TOTAL_FILES
+    os.chdir(save_directory)
     for meeting in tqdm(response_data['meetings']):
         TOTAL_FILES += len(meeting['recording_files'])
+        if not os.path.isdir(dir := '{}_{}'.format(meeting['topic'], meeting['start_time'])):
+            os.mkdir(dir)
         for recording_file in meeting['recording_files']:
             downland_recording(recording_file['download_url'],
-                               recording_file['id'],
-                               recording_file['recording_start'],
-                               recording_file['recording_type'],
-                               save_directory)
+                               meeting['topic'],
+                               recording_file['file_type'],
+                               save_directory + f'{dir}/')
     global TOTAL_MEETINGS
     TOTAL_MEETINGS += len(response_data['meetings'])
 
