@@ -23,3 +23,5 @@ python downland.py date_from=2022-05-01 date_to=2022-05-09 directory=/home/examp
 python downland.py date_from=2022-05-01 date_to=2022-05-09
 ```
 Если директория не будет указана, сохранение будет производиться в текущей директории в созданную папку videos.
+
+### После запуска команды введите JWT токен
