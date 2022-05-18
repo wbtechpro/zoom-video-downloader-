@@ -86,7 +86,7 @@ def downland_recording(downland_url, topic, fyle_type, save_directory):
     try:
         r = requests.get('{}?access_token={}'.format(downland_url, JWT), stream=True)
         if r.status_code == 200:
-            with open(r'{}'.format(save_directory) + topic + '.{}'.format(fyle_type.lower()), 'wb') as f:
+            with open(r'{}'.format(save_directory) + topic.replace('/', '') + '.{}'.format(fyle_type.lower()), 'wb') as f:
                 r.raw.decode_content = True
                 shutil.copyfileobj(r.raw, f)
     except requests.RequestException as problem:
