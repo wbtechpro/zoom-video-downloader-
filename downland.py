@@ -3,7 +3,6 @@ import sys
 import os
 import time
 import datetime
-import threading
 
 from tqdm import tqdm
 import requests
@@ -86,9 +85,13 @@ def main(directory):
 
 def downland_recording(downland_url, topic, fyle_type, save_directory, sess):
     try:
-        r = sess.get('{}?access_token={}'.format(downland_url, JWT), stream=True, headers={'Authorization': None})
+        r = sess.get('{}?access_token={}'.format(downland_url, JWT),
+                     stream=True,
+                     headers={'Authorization': None})
         if r.status_code == 200:
-            with open(r'{}'.format(save_directory) + topic.replace('/', '') + '.{}'.format(fyle_type.lower()),
+            with open(r'{}'.format(save_directory) +
+                      topic.replace('/', '') +
+                      '.{}'.format(fyle_type.lower()),
                       'wb') as f:
                 r.raw.decode_content = True
                 shutil.copyfileobj(r.raw, f)
