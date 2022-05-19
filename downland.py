@@ -38,12 +38,13 @@ def main(directory):
             days_from_to.append(int(date.split('-')[2]))
     year_from = int(date_from.split('-')[0])
     year_to = int(date_to.split('-')[0])
+    sess = requests.Session()
     if year_from == year_to:
         if month_from_to[0] == month_from_to[1]:
             start_date = datetime.datetime(year_from, month_from_to[0], days_from_to[0])
             next_date = datetime.datetime(year_to, month_from_to[1], days_from_to[1])
             print(start_date, next_date)
-            downland(directory, start_date, next_date)
+            downland(directory, start_date, next_date, sess)
         else:
             for month in range(month_from_to[0], month_from_to[1]):
                 next_month = month + 1
@@ -54,7 +55,7 @@ def main(directory):
                 if month == month_from_to[0] or (month == month_from_to[0] and next_month == month_from_to[1]):
                     start_date = datetime.datetime(year_to, month, days_from_to[0])
                 print(start_date, next_date)
-                downland(directory, start_date, next_date)
+                downland(directory, start_date, next_date, sess)
     else:
         month_in_year = 13
         for year in range(year_from, year_to + 1):
@@ -79,28 +80,31 @@ def main(directory):
                 start_date = datetime.datetime(year, month, day)
                 next_date = datetime.datetime(next_year, next_month, next_day)
                 print(start_date, next_date)
-                downland(directory, start_date, next_date)
+                downland(directory, start_date, next_date, sess)
 
 
-def downland_recording(downland_url, topic, fyle_type, save_directory):
+def downland_recording(downland_url, topic, fyle_type, save_directory, sess):
     try:
-        r = requests.get('{}?access_token={}'.format(downland_url, JWT), stream=True)
+        r = sess.get('{}?access_token={}'.format(downland_url, JWT),
+                     stream=True,
+                     headers={'Authorization': None})
         if r.status_code == 200:
-            with open(r'{}'.format(save_directory) + topic.replace('/', '') + '.{}'.format(fyle_type.lower()), 'wb') as f:
+            with open(r'{}'.format(save_directory) +
+                      topic.replace('/', '') +
+                      '.{}'.format(fyle_type.lower()),
+                      'wb') as f:
                 r.raw.decode_content = True
                 shutil.copyfileobj(r.raw, f)
     except requests.RequestException as problem:
         raise ConnectionError('Превышено количество запросов, ошибка: {}'.format(problem))
 
 
-def downland(save_directory, start_date, next_date, ):
+def downland(save_directory, start_date, next_date, sess):
     date_string = '%Y-%m-%d'
-    response_data = requests.get(
+    sess.headers.update({'Authorization': 'Bearer {}'.format(JWT)})
+    response_data = sess.get(
         '{}recordings?from={}&to={}'.format(URL, start_date.strftime(date_string),
-                                            next_date.strftime(date_string)),
-        headers={
-            'Authorization':
-                'Bearer {}'.format(JWT)}).json()
+                                            next_date.strftime(date_string)), ).json()
     global TOTAL_FILES
     os.chdir(save_directory)
     for meeting in tqdm(response_data['meetings']):
@@ -114,7 +118,8 @@ def downland(save_directory, start_date, next_date, ):
             downland_recording(recording_file['download_url'],
                                meeting['topic'],
                                recording_file['file_type'],
-                               save_directory + f'{dir}/')
+                               save_directory + f'{dir}/',
+                               sess)
     global TOTAL_MEETINGS
     TOTAL_MEETINGS += len(response_data['meetings'])
 
