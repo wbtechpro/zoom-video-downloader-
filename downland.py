@@ -82,7 +82,7 @@ def main(directory):
                 start_date = datetime.datetime(year, month, day)
                 next_date = datetime.datetime(next_year, next_month, next_day)
                 print(start_date, next_date)
-                # downland(directory, start_date, next_date, sess)
+                downland(directory, start_date, next_date, sess)
 
 
 def downland_recording(downland_url, topic, fyle_type, save_directory, sess):
