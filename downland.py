@@ -71,12 +71,12 @@ def main(directory):
                 next_month = month + 1
                 day = 1
                 next_day = 1
-                if month == 12:
+                if month == 12 and year != year_to:
                     next_year += 1
                     next_month = 1
                 if year == year_from and month == month_start == month_from_to[0]:
                     day = days_from_to[0]
-                if next_year == year_to and next_month == month_in_year + 1:
+                if year == year_to and month == month_in_year:
                     next_month = month
                     next_day = days_from_to[1]
                 start_date = datetime.datetime(year, month, day)
@@ -136,3 +136,4 @@ if __name__ == '__main__':
     print(f'Всего встреч скачалось: {TOTAL_MEETINGS}')
     print(f'Всего файлов скачалось: {TOTAL_FILES}')
     print(f'Время скачивания: {time.time() - a}')
+
