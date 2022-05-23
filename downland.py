@@ -25,13 +25,12 @@ def main(directory):
     date_from = [date for date in DATES if 'date_from' in date][0].split('=')[1]
     date_to = [date for date in DATES if 'date_to' in date][0].split('=')[1]
     month_from_to = []
+    days_from_to = []
     for date in (date_from, date_to):
         if date.split('-')[1][0] == '0':
             month_from_to.append(int(date.split('-')[1][1]))
         else:
             month_from_to.append(int(date.split('-')[1]))
-    days_from_to = []
-    for date in (date_from, date_to):
         if date.split('-')[2][0] == '0':
             days_from_to.append(int(date.split('-')[2][1]))
         else:
@@ -46,41 +45,44 @@ def main(directory):
             print(start_date, next_date)
             downland(directory, start_date, next_date, sess)
         else:
-            for month in range(month_from_to[0], month_from_to[1]):
+            for month in range((first := month_from_to[0]), (all_months := month_from_to[1]) + 1):
                 next_month = month + 1
-                start_date = datetime.datetime(year_from, month, 1)
-                next_date = datetime.datetime(year_to, next_month, 1)
-                if next_month == month_from_to[1]:
-                    next_date = datetime.datetime(year_to, next_month, days_from_to[1])
-                if month == month_from_to[0] or (month == month_from_to[0] and next_month == month_from_to[1]):
-                    start_date = datetime.datetime(year_to, month, days_from_to[0])
+                day = 1
+                next_day = 1
+                if month == first:
+                    day = days_from_to[0]
+                if month == all_months:
+                    next_month = month
+                    next_day = days_from_to[1]
+                start_date = datetime.datetime(year_from, month, day)
+                next_date = datetime.datetime(year_to, next_month, next_day)
                 print(start_date, next_date)
                 downland(directory, start_date, next_date, sess)
     else:
-        month_in_year = 13
+        month_in_year = 12
         for year in range(year_from, year_to + 1):
+            month_start = 1
             if year == year_from:
                 month_start = month_from_to[0]
-            else:
-                month_start = 1
-            for month in range(month_start, month_in_year):
-                next_month = month + 1
+            if year == year_to:
+                month_in_year = month_from_to[1]
+            for month in range(month_start, month_in_year + 1):
                 next_year = year
-                if month == 12:
-                    if year + 1 == year_to:
-                        month_in_year = month_from_to[1]
-                    next_month = 1
-                    next_year = year + 1
+                next_month = month + 1
                 day = 1
                 next_day = 1
-                if year == year_from and month == month_from_to[0]:
+                if month == 12:
+                    next_year += 1
+                    next_month = 1
+                if year == year_from and month == month_start == month_from_to[0]:
                     day = days_from_to[0]
-                if next_month == month_from_to[1] and next_year == year_to:
+                if next_year == year_to and next_month == month_in_year + 1:
+                    next_month = month
                     next_day = days_from_to[1]
                 start_date = datetime.datetime(year, month, day)
                 next_date = datetime.datetime(next_year, next_month, next_day)
                 print(start_date, next_date)
-                downland(directory, start_date, next_date, sess)
+                # downland(directory, start_date, next_date, sess)
 
 
 def downland_recording(downland_url, topic, fyle_type, save_directory, sess):
