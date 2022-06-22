@@ -1,27 +1,27 @@
 # zoom video downloader
 
-Скрипт для загрузки видео из Zoom
+Zoom video download script
 
-### Установить зависимости
+### Install dependencies
 
 ```
 pip install -r requirements.txt
 ```
 
-### Команда
+### Command
 
 ```
- python downland.py date_from=(с какого числа записи) date_from=(по какое) directory=(опционально, директория для сохранения)
+ python downland.py date_from=(from what date to download records) date_from=(by what date to download records) directory=(optional, directory to save)
 ```
-### Пример команды
+### Command example
 ```
 python downland.py date_from=2022-05-01 date_to=2022-05-09 directory=/home/example/
 ```
 
-### Пример команды без указания директории
+###  Command example without directory
 ```
 python downland.py date_from=2022-05-01 date_to=2022-05-09
 ```
-Если директория не будет указана, сохранение будет производиться в текущей директории в созданную папку videos.
+If the directory is not specified, saving will be made in the current directory to the created videos folder.
 
-### После запуска команды введите JWT токен
+### After running the command, enter the JWT token
